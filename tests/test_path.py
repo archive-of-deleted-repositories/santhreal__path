@@ -276,6 +276,15 @@ class TestBasics:
         is_windows = platform.system() == 'Windows'
         assert is_windows or not (tmpfile.stat().st_mode & stat.S_IROTH)
 
+    def test_permissions_symbolic_masks_file_type_bits(self, tmpdir):
+        tmpfile = Path(tmpdir) / 'file'
+        tmpfile.touch()
+        tmpfile.chmod(0o644)
+        perms = tmpfile.permissions
+        assert len(perms.symbolic) == 9
+        assert perms.symbolic == 'rw-r--r--'
+        assert set(perms.symbolic) <= set('rwx-')
+
     @pytest.mark.skipif("not hasattr(Path, 'chown')")
     def test_chown(self, tmpdir):
         tmpfile = Path(tmpdir) / 'file'

@@ -162,7 +162,8 @@ class Permissions(int):
 
     @property
     def bits(self) -> Iterator[int]:
-        return reversed(tuple(padded(gen_bit_values(self), 0, n=9)))
+        # st_mode includes file-type bits; symbolic mode uses permission bits only
+        return reversed(tuple(padded(gen_bit_values(self & 0o777), 0, n=9)))
 
     def __str__(self) -> str:
         return self.symbolic
